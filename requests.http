@@ -1,0 +1,32 @@
+### Listar todas as categorias
+GET http://localhost:3000/api/categorias
+
+### Criar uma nova categoria
+POST http://localhost:3000/api/categorias
+Content-Type: application/json
+
+{
+    "nome": "Bebidas"
+}
+
+### Criar outra categoria
+POST http://localhost:3000/api/categorias
+Content-Type: application/json
+
+{
+    "nome": "Sobremesas"
+}
+
+### Atualizar a categoria de ID 1 (exemplo)
+# Altere o "1" no final da URL para o ID que você quer mudar
+PUT http://localhost:3000/api/categorias/1
+Content-Type: application/json
+
+{
+    "nome": "Refrigerantes e Sucos"
+}
+
+
+### Deletar a categoria de ID 2 (exemplo)
+# Altere o "2" no final da URL para o ID que você quer deletar
+DELETE http://localhost:3000/api/categorias/2

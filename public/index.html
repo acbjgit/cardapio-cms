@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Cardápio Online</title>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <div class="logo-container">
+                <!-- ✨ NOVO ELEMENTO PARA O LOGO ✨ -->
+                <img id="logo-img" class="logo-img" src="" alt="Logo da Loja">
+                <a href="#" class="logo" id="nome-loja">Nome da Loja</a>
+                <span id="status-loja" class="status-loja fechado">Fechada</span>
+            </div>
+            <div class="carrinho-container" id="btn-carrinho">
+                <i class="fa fa-shopping-bag"></i>
+                <span id="badge-carrinho" class="badge-carrinho">0</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="container info-loja">
+        <div id="endereco-loja"></div>
+        <div id="horario-loja"></div>
+    </section>
+
+    <nav class="container" id="filtro-categorias"></nav>
+
+    <main class="container">
+        <h2 id="titulo-cardapio">O nosso Cardápio</h2>
+        <div id="menu-itens" class="menu-grid"></div>
+    </main>
+
+    <!-- Modais (sem alterações) -->
+    <div class="modal-produto" id="modal-produto">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="produto-nome-modal">Nome do Produto</h3>
+                <button class="btn-fechar" id="btn-fechar-produto-modal"><i class="fa fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="produto-imagem-modal">
+                    <img id="produto-imagem-modal" src="" alt="Produto">
+                </div>
+                <p id="produto-descricao-modal" class="produto-descricao-modal"></p>
+                <div class="secao-opcoes">
+                    <h4>Adicionais:</h4>
+                    <div id="lista-adicionais-modal"></div>
+                </div>
+                <div class="secao-opcoes">
+                    <h4>Observações:</h4>
+                    <textarea id="observacoes-produto" placeholder="Ex: Sem cebola, ponto da carne, etc."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="controlo-quantidade">
+                    <button id="btn-diminuir-qt">-</button>
+                    <span id="quantidade-produto-modal">1</span>
+                    <button id="btn-aumentar-qt">+</button>
+                </div>
+                <button class="btn-finalizar" id="btn-adicionar-ao-carrinho">
+                    Adicionar ao carrinho (<span id="preco-total-produto-modal">R$ 0,00</span>)
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-carrinho" id="modal-carrinho">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>O meu Carrinho</h3>
+                <button class="btn-fechar" id="btn-fechar-carrinho"><i class="fa fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="lista-carrinho"></div>
+                <div class="carrinho-resumo">
+                    <div class="metodo-entrega-container">
+                        <label><input type="radio" name="metodo-entrega" value="entrega" checked> Entrega</label>
+                        <label><input type="radio" name="metodo-entrega" value="retirada"> Retirada no local</label>
+                    </div>
+                    <div class="entrega-info">
+                        <div class="cep-container">
+                            <input type="text" id="input-cep" placeholder="Digite o seu CEP">
+                            <button class="btn-buscar-cep" id="btn-buscar-cep">Calcular</button>
+                        </div>
+                        <p id="cep-invalido" class="hidden">CEP não encontrado. Tente novamente.</p>
+                        <div class="endereco-container">
+                            <input type="text" id="input-rua" placeholder="Rua / Avenida" readonly>
+                            <input type="text" id="input-bairro" placeholder="Bairro" readonly>
+                            <div class="endereco-linha">
+                                <input type="text" id="input-numero" placeholder="Número">
+                                <input type="text" id="input-complemento" placeholder="Complemento (opcional)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagamento-container">
+                        <h4>Forma de pagamento:</h4>
+                        <div class="metodo-pagamento-container">
+                            <label><input type="radio" name="metodo-pagamento" value="dinheiro" checked> Dinheiro</label>
+                            <label><input type="radio" name="metodo-pagamento" value="cartao"> Cartão</label>
+                        </div>
+                        <div class="troco-container">
+                            <input type="text" id="input-troco" placeholder="Troco para quanto?">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="checkout-container">
+                    <div class="total-container">
+                        <p>Subtotal:</p>
+                        <p id="lblSubTotal">R$ 0,00</p>
+                    </div>
+                    <div class="total-container">
+                        <p>Taxa de Entrega:</p>
+                        <p id="lblTaxaEntrega">+ R$ 0,00</p>
+                    </div>
+                    <div class="total-container total-geral">
+                        <p><b>Total:</b></p>
+                        <p><b id="lblTotalGeral">R$ 0,00</b></p>
+                    </div>
+                </div>
+                <button class="btn-finalizar" id="checkout-btn">Finalizar Pedido</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>

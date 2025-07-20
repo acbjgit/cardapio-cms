@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração - Cardápio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Painel de Administração</h1>
+            <button id="btn-logout" style="height: fit-content;">Sair (Logout)</button>
+        </div>
+
+        <!-- Secções de Categorias, Adicionais, Taxas (sem alterações) -->
+        <div class="section">
+            <h2>Gerir Categorias</h2>
+            <form id="form-categoria">
+                <input type="hidden" id="categoria-id">
+                <input type="text" id="categoria-nome" placeholder="Nome da Categoria" required>
+                <button type="submit">Guardar Categoria</button>
+            </form>
+            <table id="tabela-categorias">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="section">
+            <h2>Gerir Itens Adicionais</h2>
+            <form id="form-adicional">
+                <input type="hidden" id="adicional-id">
+                <input type="text" id="adicional-nome" placeholder="Nome do Adicional (ex: Bacon Extra)" required>
+                <input type="number" id="adicional-preco" placeholder="Preço (ex: 3.50)" step="0.01" required>
+                <button type="submit">Guardar Adicional</button>
+            </form>
+            <table id="tabela-adicionais">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="section">
+            <h2>Gerir Taxas de Entrega</h2>
+            <form id="form-taxa-entrega">
+                <input type="hidden" id="taxa-id">
+                <input type="text" id="taxa-bairro" placeholder="Nome do Bairro" required>
+                <input type="number" id="taxa-valor" placeholder="Valor da Taxa (ex: 5.00)" step="0.01" required>
+                <button type="submit">Guardar Taxa</button>
+            </form>
+            <table id="tabela-taxas-entrega">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bairro</th>
+                        <th>Taxa</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="section">
+            <h2>Gerir Produtos</h2>
+            <form id="form-produto" enctype="multipart/form-data">
+                <input type="hidden" id="produto-id">
+                <input type="text" id="produto-nome" placeholder="Nome do Produto" required>
+                <textarea id="produto-descricao" placeholder="Descrição do Produto"></textarea>
+                <input type="number" id="produto-preco" placeholder="Preço (ex: 25.50)" step="0.01" required>
+                <select id="produto-categoria" required>
+                    <option value="">Selecione uma categoria...</option>
+                </select>
+                <label for="produto-adicionais">Adicionais Disponíveis (segure Ctrl ou Cmd para selecionar vários):</label>
+                <select id="produto-adicionais" multiple style="height: 150px;"></select>
+                <input type="file" id="produto-imagem">
+                <button type="submit">Guardar Produto</button>
+            </form>
+            <table id="tabela-produtos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagem</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Categoria</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Secção de Configurações Gerais (ATUALIZADA) -->
+        <div class="section">
+            <h2>Configurações Gerais</h2>
+            <form id="form-configuracoes">
+                <label for="config-nome-loja">Nome da Loja:</label>
+                <input type="text" id="config-nome-loja">
+
+                <label for="config-logo-loja">Logo da Loja:</label>
+                <input type="file" id="config-logo-loja">
+                <div id="logo-loja-preview"></div>
+
+                <!-- ✨ NOVO CAMPO PARA WHATSAPP ✨ -->
+                <label for="config-whatsapp">WhatsApp da Loja (com código do país, ex: 5511999998888):</label>
+                <input type="text" id="config-whatsapp">
+
+                <label for="config-endereco">Endereço da Loja:</label>
+                <input type="text" id="config-endereco" placeholder="Rua Exemplo, 123 - Bairro">
+                
+                <label class="checkbox-label">
+                    <input type="checkbox" id="config-mostrar-endereco"> Mostrar endereço no cardápio
+                </label>
+
+                <label for="config-horario">Horário de Funcionamento:</label>
+                <input type="text" id="config-horario" placeholder="Seg. a Sáb. das 18h às 23h">
+
+                <label for="config-status">Status da Loja:</label>
+                <select id="config-status">
+                    <option value="aberto">Aberta</option>
+                    <option value="fechado">Fechada</option>
+                </select>
+                
+                <label for="config-cor-titulo">Cor Principal do Tema:</label>
+                <input type="color" id="config-cor-titulo">
+
+                <label for="config-imagem-fundo">Imagem de Fundo do Cardápio:</label>
+                <input type="file" id="config-imagem-fundo">
+                <div id="imagem-fundo-preview"></div>
+
+                <button type="submit">Guardar Configurações</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
