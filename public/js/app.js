@@ -1,8 +1,7 @@
 // public/js/app.js
 
 // URL base da nossa API
-// const API_BASE_URL = 'http://localhost:3000/api'; //modo desenvolvimento
-const API_BASE_URL = '/api'; //modo produção
+const API_BASE_URL = '/api'; // Caminho relativo
 
 // Objeto principal da nossa aplicação
 var CARDAPIO = {
@@ -12,6 +11,7 @@ var CARDAPIO = {
     taxaEntrega: 0,
     metodoEntrega: 'entrega',
     formaPagamento: 'dinheiro',
+    whatsappLoja: '', // ✨ Nova propriedade para guardar o número
 
     // Métodos da nossa aplicação
     metodos: {
@@ -29,20 +29,19 @@ var CARDAPIO = {
         // ✨ FUNÇÃO ATUALIZADA ✨
         carregarConfiguracoes: () => {
             $.get(`${API_BASE_URL}/configuracoes`, (configs) => {
-                // Logo da Loja
+                // Guarda o número do WhatsApp
+                CARDAPIO.whatsappLoja = configs.whatsapp_loja;
+
                 if (configs.logo_url) {
                     $('#logo-img').attr('src', configs.logo_url).show();
                 }
-                // Nome da Loja
                 if (configs.nome_loja) {
                     $('#nome-loja').text(configs.nome_loja);
                     document.title = configs.nome_loja;
                 }
-                // Cor do Tema
                 if (configs.cor_titulo) {
                     document.documentElement.style.setProperty('--cor-primaria', configs.cor_titulo);
                 }
-                // Imagem de Fundo
                 if (configs.imagem_fundo_url) {
                     $('body').css({
                         'background-image': `url(${configs.imagem_fundo_url})`,
@@ -51,7 +50,6 @@ var CARDAPIO = {
                         'background-attachment': 'fixed'
                     });
                 }
-                // Endereço e Horário (com visibilidade controlada)
                 if (configs.mostrar_endereco === 'true') {
                     $('#endereco-loja').text(configs.endereco_loja || '');
                     $('#horario-loja').text(configs.horario_funcionamento || '');
@@ -59,8 +57,6 @@ var CARDAPIO = {
                 } else {
                     $('.info-loja').addClass('hidden');
                 }
-                
-                // Status da Loja
                 const statusLoja = $('#status-loja');
                 if (configs.status_loja === 'aberto') {
                     statusLoja.text('Aberta').removeClass('fechado').addClass('aberto');
@@ -70,6 +66,7 @@ var CARDAPIO = {
             });
         },
 
+        // ... (Restante das funções sem alterações) ...
         carregarCategorias: () => {
             $.get(`${API_BASE_URL}/categorias`, (categorias) => {
                 const filtroContainer = $('#filtro-categorias');
@@ -359,9 +356,14 @@ var CARDAPIO = {
             CARDAPIO.metodos.atualizarCarrinho();
         },
 
+        // ✨ FUNÇÃO FINALIZAR PEDIDO ATUALIZADA ✨
         finalizarPedido: () => {
             if (CARDAPIO.meuCarrinho.length === 0) {
                 CARDAPIO.metodos.mensagem('O seu carrinho está vazio.');
+                return;
+            }
+            if (!CARDAPIO.whatsappLoja) {
+                CARDAPIO.metodos.mensagem('O número de WhatsApp da loja não está configurado.');
                 return;
             }
 
@@ -415,7 +417,7 @@ var CARDAPIO = {
             textoPedido += `*Taxa de Entrega:* ${taxaEntregaFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n`;
             textoPedido += `*Total:* *${totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n`;
 
-            const PHONE = '5511000000000'; // Substitua pelo número do WhatsApp
+            const PHONE = CARDAPIO.whatsappLoja;
             const encodedMessage = encodeURIComponent(textoPedido);
             const whatsappURL = `https://wa.me/${PHONE}?text=${encodedMessage}`;
             window.open(whatsappURL, '_blank');
