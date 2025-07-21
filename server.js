@@ -42,7 +42,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false,
+        secure: false, // Em produção (com HTTPS), mude para true
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24
     }
@@ -101,43 +101,6 @@ app.get('/api/check-auth', verificarAutenticacao, (req, res) => {
     res.status(200).json({ message: 'Autenticado' });
 });
 
-// --- ✨ ROTA SECRETA E TEMPORÁRIA PARA CRIAR/ATUALIZAR O ADMIN ✨ ---
-app.get('/api/setup-admin-user', async (req, res) => {
-    // Para usar, aceda a: seusite.com/api/setup-admin-user?secret=sua-chave-secreta
-    const { secret } = req.query;
-    const CHAVE_SECRETA_SETUP = "mudar-senha-agora-123"; // Pode mudar isto se quiser
-
-    if (secret !== CHAVE_SECRETA_SETUP) {
-        return res.status(403).send('Acesso negado.');
-    }
-
-    try {
-        const username = 'admin';
-        const senhaForte = 'admin123'; // Senha temporária
-        
-        const salt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash(senhaForte, salt);
-
-        // Tenta atualizar o utilizador. Se não existir, cria um novo.
-        const [result] = await db.query(
-            `INSERT INTO usuarios (username, password_hash) VALUES (?, ?)
-             ON DUPLICATE KEY UPDATE password_hash = ?`,
-            [username, passwordHash, passwordHash]
-        );
-
-        if (result.affectedRows > 0) {
-            res.status(200).send(`Utilizador '${username}' criado/atualizado com sucesso! A nova senha é: ${senhaForte}. Por favor, remova esta rota do server.js agora.`);
-        } else {
-            res.status(500).send('Algo correu mal ao criar/atualizar o utilizador.');
-        }
-
-    } catch (error) {
-        console.error("Erro no setup do admin:", error);
-        res.status(500).send('Erro interno no servidor durante o setup do admin.');
-    }
-});
-
-
 // =================================================================
 //                      APIs DO CRUD
 // =================================================================
@@ -153,7 +116,6 @@ app.get('/api/categorias', async (req, res) => {
     }
 });
 
-// ... (Resto do seu código de APIs sem alterações) ...
 app.post('/api/categorias', verificarAutenticacao, async (req, res) => {
     try {
         const { nome } = req.body;
