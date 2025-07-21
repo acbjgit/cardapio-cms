@@ -1,6 +1,9 @@
 $(document).ready(function() {
     
-    const API_BASE_URL = 'http://localhost:3000/api';
+    // ✨ CORREÇÃO AQUI: Usamos um caminho relativo para a API ✨
+    // Em vez de 'http://localhost:3000/api', usamos apenas '/api'.
+    // Isto faz com que o pedido seja enviado para o mesmo domínio onde a página está hospedada.
+    const API_BASE_URL = '/api';
 
     $('#form-login').on('submit', function(event) {
         event.preventDefault();
