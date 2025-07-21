@@ -17,16 +17,11 @@ const PORT = 3000;
 // =================================================================
 
 // Configuração do Cloudinary
-
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    // ...
-}));
 
 // Configuração do Multer
 const storage = multer.memoryStorage();
@@ -43,7 +38,7 @@ app.use(express.static('public'));
 app.use('/admin', express.static('admin'));
 
 app.use(session({
-    secret: 'chave-super-secreta-para-o-cardapio-cms-123456',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -106,6 +101,43 @@ app.get('/api/check-auth', verificarAutenticacao, (req, res) => {
     res.status(200).json({ message: 'Autenticado' });
 });
 
+// --- ✨ ROTA SECRETA E TEMPORÁRIA PARA CRIAR/ATUALIZAR O ADMIN ✨ ---
+app.get('/api/setup-admin-user', async (req, res) => {
+    // Para usar, aceda a: seusite.com/api/setup-admin-user?secret=sua-chave-secreta
+    const { secret } = req.query;
+    const CHAVE_SECRETA_SETUP = "mudar-senha-agora-123"; // Pode mudar isto se quiser
+
+    if (secret !== CHAVE_SECRETA_SETUP) {
+        return res.status(403).send('Acesso negado.');
+    }
+
+    try {
+        const username = 'admin';
+        const senhaForte = 'admin123'; // Senha temporária
+        
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(senhaForte, salt);
+
+        // Tenta atualizar o utilizador. Se não existir, cria um novo.
+        const [result] = await db.query(
+            `INSERT INTO usuarios (username, password_hash) VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE password_hash = ?`,
+            [username, passwordHash, passwordHash]
+        );
+
+        if (result.affectedRows > 0) {
+            res.status(200).send(`Utilizador '${username}' criado/atualizado com sucesso! A nova senha é: ${senhaForte}. Por favor, remova esta rota do server.js agora.`);
+        } else {
+            res.status(500).send('Algo correu mal ao criar/atualizar o utilizador.');
+        }
+
+    } catch (error) {
+        console.error("Erro no setup do admin:", error);
+        res.status(500).send('Erro interno no servidor durante o setup do admin.');
+    }
+});
+
+
 // =================================================================
 //                      APIs DO CRUD
 // =================================================================
@@ -121,6 +153,7 @@ app.get('/api/categorias', async (req, res) => {
     }
 });
 
+// ... (Resto do seu código de APIs sem alterações) ...
 app.post('/api/categorias', verificarAutenticacao, async (req, res) => {
     try {
         const { nome } = req.body;
@@ -420,7 +453,6 @@ app.get('/api/configuracoes', async (req, res) => {
     }
 });
 
-// ✨ ROTA DE CONFIGURAÇÕES ATUALIZADA PARA LIDAR COM DOIS FICHEIROS ✨
 const uploadConfig = upload.fields([
     { name: 'imagem_fundo', maxCount: 1 },
     { name: 'logo_loja', maxCount: 1 }
@@ -429,8 +461,6 @@ app.put('/api/configuracoes', verificarAutenticacao, uploadConfig, async (req, r
     try {
         const configuracoes = req.body;
         const files = req.files;
-
-        // Upload da imagem de fundo, se existir
         if (files && files.imagem_fundo) {
             const result = await new Promise((resolve, reject) => {
                 cloudinary.uploader.upload_stream({ folder: "cardapio_online/config" }, (error, result) => {
@@ -439,8 +469,6 @@ app.put('/api/configuracoes', verificarAutenticacao, uploadConfig, async (req, r
             });
             configuracoes.imagem_fundo_url = result.secure_url;
         }
-
-        // Upload do logo, se existir
         if (files && files.logo_loja) {
             const result = await new Promise((resolve, reject) => {
                 cloudinary.uploader.upload_stream({ folder: "cardapio_online/config" }, (error, result) => {
@@ -449,7 +477,6 @@ app.put('/api/configuracoes', verificarAutenticacao, uploadConfig, async (req, r
             });
             configuracoes.logo_url = result.secure_url;
         }
-
         const promises = Object.entries(configuracoes).map(([chave, valor]) => {
             const sql = 'INSERT INTO configuracoes (chave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?';
             return db.query(sql, [chave, valor, valor]);
@@ -461,6 +488,92 @@ app.put('/api/configuracoes', verificarAutenticacao, uploadConfig, async (req, r
         res.status(500).json({ message: 'Erro no servidor ao atualizar configurações.' });
     }
 });
+
+
+// --- API DE PEDIDOS ---
+app.get('/api/pedidos', verificarAutenticacao, async (req, res) => {
+    try {
+        const [pedidos] = await db.query('SELECT * FROM pedidos ORDER BY data_pedido DESC');
+        res.status(200).json(pedidos);
+    } catch (error) {
+        console.error("Erro ao buscar pedidos:", error);
+        res.status(500).json({ message: 'Erro no servidor ao buscar pedidos.' });
+    }
+});
+
+app.post('/api/pedidos', async (req, res) => {
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+        const { carrinho, totais, entrega, pagamento } = req.body;
+        const numeroPedido = `PEDIDO-${Date.now()}`;
+        const queryPedido = `
+            INSERT INTO pedidos (numero_pedido, subtotal, taxa_entrega, total, metodo_entrega, forma_pagamento, troco_para, endereco_cep, endereco_rua, endereco_bairro, endereco_numero, endereco_complemento)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const [pedidoResult] = await connection.query(queryPedido, [
+            numeroPedido,
+            totais.subTotal,
+            totais.taxaEntrega,
+            totais.totalGeral,
+            entrega.metodo,
+            pagamento.forma,
+            pagamento.troco,
+            entrega.cep,
+            entrega.rua,
+            entrega.bairro,
+            entrega.numero,
+            entrega.complemento
+        ]);
+        const pedidoId = pedidoResult.insertId;
+        for (const item of carrinho) {
+            const queryItem = `
+                INSERT INTO pedido_itens (id_pedido, id_produto, nome_produto, quantidade, preco_unitario, observacoes)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `;
+            const [itemResult] = await connection.query(queryItem, [
+                pedidoId,
+                item.id,
+                item.name,
+                item.quantity,
+                item.price,
+                item.observacoes
+            ]);
+            const pedidoItemId = itemResult.insertId;
+            if (item.adicionais && item.adicionais.length > 0) {
+                const queryAdicionais = `
+                    INSERT INTO pedido_item_adicionais (id_pedido_item, nome_adicional, preco_adicional) VALUES ?
+                `;
+                const valuesAdicionais = item.adicionais.map(ad => [pedidoItemId, ad.nome, ad.preco]);
+                await connection.query(queryAdicionais, [valuesAdicionais]);
+            }
+        }
+        await connection.commit();
+        res.status(201).json({ message: 'Pedido criado com sucesso!', numeroPedido: numeroPedido });
+    } catch (error) {
+        await connection.rollback();
+        console.error('Erro ao criar pedido:', error);
+        res.status(500).json({ message: 'Erro no servidor ao criar pedido.' });
+    } finally {
+        connection.release();
+    }
+});
+
+app.put('/api/pedidos/:id/status', verificarAutenticacao, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        if (!status) {
+            return res.status(400).json({ message: 'O novo status é obrigatório.' });
+        }
+        await db.query('UPDATE pedidos SET status = ? WHERE id = ?', [status, id]);
+        res.status(200).json({ message: 'Status do pedido atualizado com sucesso.' });
+    } catch (error) {
+        console.error("Erro ao atualizar status do pedido:", error);
+        res.status(500).json({ message: 'Erro no servidor ao atualizar status.' });
+    }
+});
+
 
 // =================================================================
 //                      INICIALIZAÇÃO DO SERVIDOR
