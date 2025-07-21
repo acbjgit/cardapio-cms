@@ -63,24 +63,40 @@ const verificarAutenticacao = (req, res, next) => {
 //                      API DE AUTENTICAÇÃO
 // =================================================================
 
+// ✨ ROTA DE LOGIN ATUALIZADA COM DEPURADORES ✨
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+
+        console.log(`[DEBUG] Tentativa de login para o utilizador: ${username}`);
+
         if (!username || !password) {
             return res.status(400).json({ message: 'Usuário e senha são obrigatórios.' });
         }
+        
         const [rows] = await db.query('SELECT * FROM usuarios WHERE username = ?', [username]);
         const user = rows[0];
-        if (!user) {
+
+        if (user) {
+            console.log(`[DEBUG] Utilizador '${username}' encontrado no banco de dados. ID: ${user.id}`);
+            console.log(`[DEBUG] Hash guardado no banco: ${user.password_hash}`);
+        } else {
+            console.log(`[DEBUG] Utilizador '${username}' NÃO foi encontrado no banco de dados.`);
             return res.status(401).json({ message: 'Credenciais inválidas.' });
         }
+
         const senhaCorreta = await bcrypt.compare(password, user.password_hash);
+        
+        console.log(`[DEBUG] A comparação da senha para '${username}' retornou: ${senhaCorreta}`);
+
         if (!senhaCorreta) {
             return res.status(401).json({ message: 'Credenciais inválidas.' });
         }
+
         req.session.userId = user.id;
         req.session.username = user.username;
         res.status(200).json({ message: 'Login bem-sucedido!' });
+
     } catch (error) {
         console.error("Erro no login:", error);
         res.status(500).json({ message: 'Erro interno no servidor.' });
@@ -101,6 +117,7 @@ app.get('/api/check-auth', verificarAutenticacao, (req, res) => {
     res.status(200).json({ message: 'Autenticado' });
 });
 
+
 // =================================================================
 //                      APIs DO CRUD
 // =================================================================
@@ -116,6 +133,7 @@ app.get('/api/categorias', async (req, res) => {
     }
 });
 
+// ... (Resto do seu código de APIs sem alterações) ...
 app.post('/api/categorias', verificarAutenticacao, async (req, res) => {
     try {
         const { nome } = req.body;
