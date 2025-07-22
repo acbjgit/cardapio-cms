@@ -1,7 +1,26 @@
 // public/js/app.js
 
+// ✨ LÓGICA DO PWA (COMEÇA AQUI) ✨
+let deferredPrompt; // Variável para guardar o evento de instalação
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Previne o mini-infobar de aparecer no Chrome
+    e.preventDefault();
+    // Guarda o evento para que possa ser acionado mais tarde.
+    deferredPrompt = e;
+    // Mostra o nosso botão de instalação personalizado
+    $('#btn-instalar-app').removeClass('hidden');
+});
+
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    console.log('PWA foi instalado');
+});
+// ✨ FIM DA LÓGICA DO PWA ✨
+
+
 // URL base da nossa API
-const API_BASE_URL = '/api'; // Caminho relativo
+const API_BASE_URL = '/api';
 
 // Objeto principal da nossa aplicação
 var CARDAPIO = {
@@ -11,7 +30,7 @@ var CARDAPIO = {
     taxaEntrega: 0,
     metodoEntrega: 'entrega',
     formaPagamento: 'dinheiro',
-    whatsappLoja: '', // ✨ Nova propriedade para guardar o número
+    whatsappLoja: '',
 
     // Métodos da nossa aplicação
     metodos: {
@@ -26,12 +45,9 @@ var CARDAPIO = {
             CARDAPIO.metodos.carregarProdutos();
         },
 
-        // ✨ FUNÇÃO ATUALIZADA ✨
         carregarConfiguracoes: () => {
             $.get(`${API_BASE_URL}/configuracoes`, (configs) => {
-                // Guarda o número do WhatsApp
                 CARDAPIO.whatsappLoja = configs.whatsapp_loja;
-
                 if (configs.logo_url) {
                     $('#logo-img').attr('src', configs.logo_url).show();
                 }
@@ -66,7 +82,6 @@ var CARDAPIO = {
             });
         },
 
-        // ... (Restante das funções sem alterações) ...
         carregarCategorias: () => {
             $.get(`${API_BASE_URL}/categorias`, (categorias) => {
                 const filtroContainer = $('#filtro-categorias');
@@ -156,6 +171,19 @@ var CARDAPIO = {
         },
 
         eventos: () => {
+            // ✨ NOVO EVENTO PARA O BOTÃO DE INSTALAÇÃO ✨
+            $('#btn-instalar-app').on('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('Utilizador aceitou a instalação');
+                    }
+                    deferredPrompt = null;
+                    $('#btn-instalar-app').addClass('hidden');
+                }
+            });
+
             $('#filtro-categorias').on('click', '.btn-categoria', function() {
                 $('.btn-categoria').removeClass('active');
                 $(this).addClass('active');
@@ -356,7 +384,6 @@ var CARDAPIO = {
             CARDAPIO.metodos.atualizarCarrinho();
         },
 
-        // ✨ FUNÇÃO FINALIZAR PEDIDO ATUALIZADA ✨
         finalizarPedido: () => {
             if (CARDAPIO.meuCarrinho.length === 0) {
                 CARDAPIO.metodos.mensagem('O seu carrinho está vazio.');
