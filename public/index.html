@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ✨ CONFIGURAÇÃO PWA ✨ -->
+    <meta name="theme-color" content="#FF6347"/>
+    <link rel="manifest" href="manifest.json">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +20,6 @@
     <header class="header">
         <div class="container">
             <div class="logo-container">
-                <!-- ✨ NOVO ELEMENTO PARA O LOGO ✨ -->
                 <img id="logo-img" class="logo-img" src="" alt="Logo da Loja">
                 <a href="#" class="logo" id="nome-loja">Nome da Loja</a>
                 <span id="status-loja" class="status-loja fechado">Fechada</span>
@@ -27,7 +31,7 @@
         </div>
     </header>
 
-    <section class="container info-loja">
+    <section class="container info-loja hidden">
         <div id="endereco-loja"></div>
         <div id="horario-loja"></div>
     </section>
@@ -39,7 +43,6 @@
         <div id="menu-itens" class="menu-grid"></div>
     </main>
 
-    <!-- Modais (sem alterações) -->
     <div class="modal-produto" id="modal-produto">
         <div class="modal-content">
             <div class="modal-header">
@@ -79,7 +82,9 @@
                 <button class="btn-fechar" id="btn-fechar-carrinho"><i class="fa fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="lista-carrinho"></div>
+                <div id="lista-carrinho">
+                    <!-- Itens do carrinho serão inseridos aqui -->
+                </div>
                 <div class="carrinho-resumo">
                     <div class="metodo-entrega-container">
                         <label><input type="radio" name="metodo-entrega" value="entrega" checked> Entrega</label>
@@ -134,6 +139,21 @@
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- ✨ REGISTO DO SERVICE WORKER ✨ -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registado com sucesso:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Falha ao registar o Service Worker:', error);
+                    });
+            });
+        }
+    </script>
 
 </body>
 </html>
