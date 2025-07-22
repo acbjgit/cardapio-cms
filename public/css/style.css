@@ -21,6 +21,33 @@ h2 { text-align: center; font-size: 2rem; margin-bottom: 40px; color: var(--cor-
 .header { background-color: var(--cor-branco); padding: 20px 0; box-shadow: var(--sombra-card); position: sticky; top: 0; z-index: 100; }
 .header .container { display: flex; justify-content: space-between; align-items: center; }
 .logo { font-size: 1.5rem; font-weight: 700; color: var(--cor-secundaria); text-decoration: none; }
+
+/* ========================================================== */
+/* ✨ ESTILOS PARA AÇÕES DO CABEÇALHO (INCLUINDO BOTÃO PWA) ✨ */
+/* ========================================================== */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.btn-instalar {
+    background: none;
+    border: 2px solid var(--cor-secundaria);
+    color: var(--cor-secundaria);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+.btn-instalar:hover {
+    background-color: var(--cor-secundaria);
+    color: var(--cor-branco);
+}
 .carrinho-container { position: relative; cursor: pointer; }
 .carrinho-container .fa-shopping-bag { font-size: 1.8rem; color: var(--cor-secundaria); }
 .badge-carrinho { position: absolute; top: -5px; right: -10px; background-color: var(--cor-primaria); color: var(--cor-branco); font-size: 0.8rem; border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-weight: 600; }
