@@ -1,6 +1,6 @@
 {
-    "name": "Cardápio Online",
-    "short_name": "Cardápio",
+    "name": "Delivery do Chef",
+    "short_name": "Cardapio",
     "description": "O cardápio digital do seu restaurante favorito.",
     "start_url": "/",
     "display": "standalone",
