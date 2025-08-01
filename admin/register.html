@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrição - Novo Cardápio</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos específicos para a página de inscrição */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .register-container {
+            width: 350px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .register-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: none;
+        }
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            display: none; /* Começa escondido */
+        }
+        .message.success {
+            color: #28a745;
+        }
+        .message.error {
+            color: #d9534f;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h1>Crie a sua Loja</h1>
+        <form id="form-register">
+            <input type="text" id="nome_loja" placeholder="Nome do seu Estabelecimento" required>
+            <input type="text" id="username" placeholder="Crie um nome de utilizador (admin)" required>
+            <input type="password" id="password" placeholder="Crie uma senha" required>
+            <button type="submit">Inscrever-se</button>
+        </form>
+        <p id="message" class="message"></p>
+        <div class="login-link">
+            <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="register.js"></script>
+</body>
+</html>

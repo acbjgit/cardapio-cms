@@ -3,11 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- ✨ CONFIGURAÇÃO PWA ✨ -->
-    <meta name="theme-color" content="#FF6347"/>
-    <link rel="manifest" href="manifest.json">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,9 +19,7 @@
                 <a href="#" class="logo" id="nome-loja">Nome da Loja</a>
                 <span id="status-loja" class="status-loja fechado">Fechada</span>
             </div>
-            <!-- ✨ CONTAINER PARA AÇÕES DO CABEÇALHO ✨ -->
             <div class="header-actions">
-                <!-- Botão de Instalar App (começa escondido) -->
                 <button id="btn-instalar-app" class="btn-instalar hidden" title="Instalar Aplicação">
                     <i class="fas fa-download"></i>
                 </button>
@@ -50,6 +43,7 @@
         <div id="menu-itens" class="menu-grid"></div>
     </main>
 
+    <!-- Modal de Opções do Produto -->
     <div class="modal-produto" id="modal-produto">
         <div class="modal-content">
             <div class="modal-header">
@@ -82,21 +76,27 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal do Carrinho (ESTRUTURA CORRIGIDA) -->
     <div class="modal-carrinho" id="modal-carrinho">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>O meu Carrinho</h3>
                 <button class="btn-fechar" id="btn-fechar-carrinho"><i class="fa fa-times"></i></button>
             </div>
+            <!-- ✨ CORPO DO MODAL APENAS COM A LISTA DE ITENS ✨ -->
             <div class="modal-body">
                 <div id="lista-carrinho">
                     <!-- Itens do carrinho serão inseridos aqui -->
                 </div>
+                
+                <!-- ✨ SECÇÕES DE ENTREGA E PAGAMENTO MOVIDAS PARA A ÁREA DE SCROLL ✨ -->
                 <div class="carrinho-resumo">
                     <div class="metodo-entrega-container">
                         <label><input type="radio" name="metodo-entrega" value="entrega" checked> Entrega</label>
                         <label><input type="radio" name="metodo-entrega" value="retirada"> Retirada no local</label>
                     </div>
+
                     <div class="entrega-info">
                         <div class="cep-container">
                             <input type="text" id="input-cep" placeholder="Digite o seu CEP">
@@ -112,6 +112,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="pagamento-container">
                         <h4>Forma de pagamento:</h4>
                         <div class="metodo-pagamento-container">
@@ -124,6 +125,7 @@
                     </div>
                 </div>
             </div>
+            <!-- ✨ RODAPÉ DO MODAL COM TODO O RESTO ✨ -->
             <div class="modal-footer">
                 <div class="checkout-container">
                     <div class="total-container">
@@ -147,7 +149,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="js/app.js"></script>
 
-    <!-- ✨ REGISTO DO SERVICE WORKER ✨ -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

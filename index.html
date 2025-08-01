@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZapChef - Transforme seu WhatsApp em uma Máquina de Vendas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #f97316, #ea580c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cta-button {
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Cabeçalho -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">
+                <i class="fa-solid fa-rocket text-orange-500"></i>
+                Zap<span class="text-orange-500">Chef</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#precos" class="text-gray-600 hover:text-orange-500">Preços</a>
+                <a href="/admin/login.html" class="text-gray-600 hover:text-orange-500">Login</a>
+                <a href="/admin/register.html" class="bg-orange-500 text-white font-bold py-2 px-4 rounded-full cta-button">
+                    Começar Teste Grátis
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Seção Principal (Hero) -->
+    <main class="container mx-auto px-6 py-16 md:py-24 text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
+            Seu delivery está um <span class="gradient-text">caos de áudios e anotações</span> no WhatsApp?
+        </h1>
+        <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Pare de perder tempo e dinheiro com pedidos errados. Transforme seu WhatsApp em uma máquina de vendas organizada com um cardápio digital profissional que seus clientes vão amar.
+        </p>
+        <a href="/admin/register.html" class="bg-orange-500 text-white font-bold py-4 px-8 rounded-full text-lg cta-button inline-block">
+            Comece seu teste grátis de 7 dias <i class="fa-solid fa-arrow-right ml-2"></i>
+        </a>
+        <p class="text-sm text-gray-500 mt-4">Sem cartão de crédito. Cancele quando quiser.</p>
+    </main>
+
+    <!-- Seção do Problema -->
+    <section class="bg-white py-16 md:py-24">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Seu WhatsApp virou seu pior funcionário?</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-12">Se você se identifica com isso, não está sozinho.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                    <i class="fa-solid fa-microphone-lines-slash text-4xl text-red-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Pedidos por Áudio</h3>
+                    <p class="text-gray-600">Ouvir áudios longos e confusos que levam a erros caros na cozinha.</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                    <i class="fa-solid fa-comments-dollar text-4xl text-red-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Vendas Perdidas</h3>
+                    <p class="text-gray-600">Clientes que desistem porque você demorou para responder ou se confundiram com o cardápio em PDF.</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                    <i class="fa-solid fa-clock text-4xl text-red-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Tempo Desperdiçado</h3>
+                    <p class="text-gray-600">Horas do seu dia gastas em um "ping-pong" de mensagens para anotar um único pedido.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção da Solução -->
+    <section class="py-16 md:py-24">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2">
+                <img src="https://placehold.co/600x400/f97316/ffffff?text=Demonstração+do+ZapChef" alt="Demonstração do cardápio digital em um celular e tablet" class="rounded-lg shadow-2xl">
+            </div>
+            <div class="md:w-1/2">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Apresentamos o ZapChef: Seu Delivery, Organizado e Lucrativo.</h2>
+                <p class="text-lg text-gray-600 mb-6">O ZapChef é a plataforma que automatiza seu atendimento sem que você perca o contato direto com seu cliente no WhatsApp.</p>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check-circle text-green-500 text-2xl mr-4 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold">Pedidos Perfeitos, Sempre</h4>
+                            <p class="text-gray-600">Seu cliente escolhe, personaliza e paga. Você recebe o pedido pronto, sem chance de erro.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check-circle text-green-500 text-2xl mr-4 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold">Venda Mais com Adicionais</h4>
+                            <p class="text-gray-600">Aumente o valor de cada pedido oferecendo adicionais de forma visual e irresistível.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check-circle text-green-500 text-2xl mr-4 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold">Controle Total na sua Mão</h4>
+                            <p class="text-gray-600">Altere preços, adicione produtos e gerencie seus pedidos de qualquer lugar com nosso painel de controle fácil de usar.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Seção de Preços -->
+    <section id="precos" class="bg-white py-16 md:py-24">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Um preço justo para o seu sucesso.</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-12">Comece com 7 dias grátis. Sem compromisso, sem surpresas.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <!-- Plano Mensal -->
+                <div class="border rounded-lg p-8 w-full md:w-1/3">
+                    <h3 class="text-2xl font-bold mb-4">Plano Mensal</h3>
+                    <p class="text-5xl font-extrabold mb-2">R$ 79<span class="text-2xl font-medium">,90</span></p>
+                    <p class="text-gray-500 mb-6">/mês</p>
+                    <ul class="text-left space-y-2 mb-8">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Cardápio Digital Completo</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Painel de Gestão de Pedidos</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Pedidos Ilimitados</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Suporte via WhatsApp</li>
+                    </ul>
+                    <a href="/admin/register.html" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-full cta-button">Começar Teste Grátis</a>
+                </div>
+                <!-- Plano Anual -->
+                <div class="border-2 border-orange-500 rounded-lg p-8 w-full md:w-1/3 relative shadow-2xl">
+                    <div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-sm font-bold px-4 py-1 rounded-full">MAIS POPULAR</div>
+                    <h3 class="text-2xl font-bold mb-4">Plano Anual</h3>
+                    <p class="text-5xl font-extrabold mb-2">R$ 799<span class="text-2xl font-medium">,00</span></p>
+                    <p class="text-gray-500 mb-6">/ano</p>
+                    <ul class="text-left space-y-2 mb-8">
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> <b>Tudo do Plano Mensal, e mais:</b></li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> <b>2 Meses Grátis</b> (Economia de R$158)</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Suporte Prioritário</li>
+                    </ul>
+                    <a href="/admin/register.html" class="w-full bg-orange-500 text-white font-bold py-3 px-6 rounded-full cta-button">Quero Economizar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Chamada Final -->
+    <section class="py-16 md:py-24">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Pronto para transformar seu delivery?</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                Dê o primeiro passo para um atendimento mais rápido, eficiente e lucrativo. Seus clientes (e seu bolso) vão agradecer.
+            </p>
+            <a href="/admin/register.html" class="bg-orange-500 text-white font-bold py-4 px-8 rounded-full text-lg cta-button inline-block">
+                Começar meu teste de 7 dias
+            </a>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 ZapChef. Todos os direitos reservados.</p>
+            <p class="text-sm text-gray-400 mt-2">Uma solução desenvolvida para o seu sucesso.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

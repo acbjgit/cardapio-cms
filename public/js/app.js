@@ -1,28 +1,22 @@
 // public/js/app.js
 
-// ✨ LÓGICA DO PWA (COMEÇA AQUI) ✨
-let deferredPrompt; // Variável para guardar o evento de instalação
+// LÓGICA DO PWA
+let deferredPrompt; 
 
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Previne o mini-infobar de aparecer no Chrome
     e.preventDefault();
-    // Guarda o evento para que possa ser acionado mais tarde.
     deferredPrompt = e;
-    // Mostra o nosso botão de instalação personalizado
     $('#btn-instalar-app').removeClass('hidden');
 });
 
 window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
-    console.log('PWA foi instalado');
 });
-// ✨ FIM DA LÓGICA DO PWA ✨
+// FIM DA LÓGICA DO PWA
 
+const API_BASE_URL = '/api/public';
+let ID_LOJA = null;
 
-// URL base da nossa API
-const API_BASE_URL = '/api';
-
-// Objeto principal da nossa aplicação
 var CARDAPIO = {
     itens: [],
     meuCarrinho: [],
@@ -32,68 +26,84 @@ var CARDAPIO = {
     formaPagamento: 'dinheiro',
     whatsappLoja: '',
 
-    // Métodos da nossa aplicação
     metodos: {
         iniciar: () => {
-            CARDAPIO.metodos.carregarDadosIniciais();
-            CARDAPIO.metodos.eventos();
+            const urlParams = new URLSearchParams(window.location.search);
+            ID_LOJA = urlParams.get('loja');
+            
+            if (ID_LOJA) {
+                CARDAPIO.metodos.carregarDadosIniciais();
+                CARDAPIO.metodos.eventos();
+            } else {
+                $('body').html('<div style="text-align: center; margin-top: 50px;"><h1>Loja não encontrada.</h1><p>Por favor, verifique o link de acesso.</p></div>');
+            }
         },
 
         carregarDadosIniciais: () => {
             CARDAPIO.metodos.carregarConfiguracoes();
-            CARDAPIO.metodos.carregarCategorias();
-            CARDAPIO.metodos.carregarProdutos();
         },
 
         carregarConfiguracoes: () => {
-            $.get(`${API_BASE_URL}/configuracoes`, (configs) => {
-                CARDAPIO.whatsappLoja = configs.whatsapp_loja;
-                if (configs.logo_url) {
-                    $('#logo-img').attr('src', configs.logo_url).show();
-                }
-                if (configs.nome_loja) {
-                    $('#nome-loja').text(configs.nome_loja);
-                    document.title = configs.nome_loja;
-                }
-                if (configs.cor_titulo) {
-                    document.documentElement.style.setProperty('--cor-primaria', configs.cor_titulo);
-                }
-                if (configs.imagem_fundo_url) {
-                    $('body').css({
-                        'background-image': `url(${configs.imagem_fundo_url})`,
-                        'background-size': 'cover',
-                        'background-position': 'center',
-                        'background-attachment': 'fixed'
-                    });
-                }
-                if (configs.mostrar_endereco === 'true') {
-                    $('#endereco-loja').text(configs.endereco_loja || '');
-                    $('#horario-loja').text(configs.horario_funcionamento || '');
-                    $('.info-loja').removeClass('hidden');
-                } else {
-                    $('.info-loja').addClass('hidden');
-                }
-                const statusLoja = $('#status-loja');
-                if (configs.status_loja === 'aberto') {
-                    statusLoja.text('Aberta').removeClass('fechado').addClass('aberto');
-                } else {
-                    statusLoja.text('Fechada').removeClass('aberto').addClass('fechado');
+            $.ajax({
+                url: `${API_BASE_URL}/loja/${ID_LOJA}`,
+                method: 'GET',
+                success: (configs) => {
+                    CARDAPIO.whatsappLoja = configs.whatsapp_loja;
+                    if (configs.logo_url) {
+                        $('#logo-img').attr('src', configs.logo_url).show();
+                    }
+                    if (configs.nome_loja) {
+                        $('#nome-loja').text(configs.nome_loja);
+                        document.title = configs.nome_loja;
+                    }
+                    if (configs.cor_tema) {
+                        document.documentElement.style.setProperty('--cor-primaria', configs.cor_tema);
+                    }
+                    if (configs.imagem_fundo_url) {
+                        $('body').css({
+                            'background-image': `url(${configs.imagem_fundo_url})`,
+                            'background-size': 'cover',
+                            'background-position': 'center',
+                            'background-attachment': 'fixed'
+                        });
+                    }
+                    if (configs.mostrar_endereco) {
+                        $('#endereco-loja').text(configs.endereco_loja || '');
+                        $('#horario-loja').text(configs.horario_funcionamento || '');
+                        $('.info-loja').removeClass('hidden');
+                    } else {
+                        $('.info-loja').addClass('hidden');
+                    }
+                    const statusLoja = $('#status-loja');
+                    if (configs.status_loja === 'aberto') {
+                        statusLoja.text('Aberta').removeClass('fechado').addClass('aberto');
+                    } else {
+                        statusLoja.text('Fechada').removeClass('aberto').addClass('fechado');
+                    }
+
+                    CARDAPIO.metodos.carregarCategorias();
+                    CARDAPIO.metodos.carregarProdutos();
+                },
+                error: (xhr) => {
+                    if (xhr.status === 404) {
+                        $('body').html('<div style="text-align: center; margin-top: 50px;"><h1>Loja não encontrada.</h1><p>Por favor, verifique o link de acesso.</p></div>');
+                    }
                 }
             });
         },
 
         carregarCategorias: () => {
-            $.get(`${API_BASE_URL}/categorias`, (categorias) => {
+            $.get(`${API_BASE_URL}/categorias/${ID_LOJA}`, (categorias) => {
                 const filtroContainer = $('#filtro-categorias');
                 filtroContainer.html('').append(`<button class="btn-categoria active" data-id-categoria="todos">Ver Todos</button>`);
-                $.each(categorias, (index, categoria) => {
+                $.each(categorias, function(index, categoria) {
                     filtroContainer.append(`<button class="btn-categoria" data-id-categoria="${categoria.id}">${categoria.nome}</button>`);
                 });
             });
         },
 
         carregarProdutos: () => {
-            $.get(`${API_BASE_URL}/produtos`, (produtos) => {
+            $.get(`${API_BASE_URL}/produtos/${ID_LOJA}`, (produtos) => {
                 CARDAPIO.itens = produtos;
                 CARDAPIO.metodos.renderizarProdutos('todos');
             });
@@ -171,7 +181,6 @@ var CARDAPIO = {
         },
 
         eventos: () => {
-            // ✨ NOVO EVENTO PARA O BOTÃO DE INSTALAÇÃO ✨
             $('#btn-instalar-app').on('click', async () => {
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
@@ -183,7 +192,6 @@ var CARDAPIO = {
                     $('#btn-instalar-app').addClass('hidden');
                 }
             });
-
             $('#filtro-categorias').on('click', '.btn-categoria', function() {
                 $('.btn-categoria').removeClass('active');
                 $(this).addClass('active');
@@ -285,11 +293,15 @@ var CARDAPIO = {
 
         atualizarCarrinho: () => {
             const listaCarrinho = $('#lista-carrinho');
-            listaCarrinho.html('');
             let subTotal = 0;
 
+            listaCarrinho.find(".item-carrinho").remove();
+            if (listaCarrinho.find(".carrinho-vazio").length) {
+                listaCarrinho.find(".carrinho-vazio").remove();
+            }
+
             if (CARDAPIO.meuCarrinho.length === 0) {
-                listaCarrinho.html('<p class="carrinho-vazio">O seu carrinho está vazio.</p>');
+                listaCarrinho.prepend('<p class="carrinho-vazio">O seu carrinho está vazio.</p>');
             } else {
                 $.each(CARDAPIO.meuCarrinho, (index, item) => {
                     let precoItemTotal = parseFloat(item.price);
@@ -322,7 +334,7 @@ var CARDAPIO = {
                             </div>
                         </div>
                     `;
-                    listaCarrinho.append(itemHtml);
+                    listaCarrinho.prepend(itemHtml);
                 });
             }
 
@@ -367,7 +379,7 @@ var CARDAPIO = {
 
         buscarTaxaPorBairro: (bairro) => {
             if (CARDAPIO.metodoEntrega !== 'entrega') return;
-            $.get(`${API_BASE_URL}/taxa-por-bairro`, { bairro: bairro }, (data) => {
+            $.get(`${API_BASE_URL}/taxa-por-bairro?id_loja=${ID_LOJA}&bairro=${bairro}`, (data) => {
                 CARDAPIO.taxaEntrega = parseFloat(data.taxa);
             }).fail(() => {
                 CARDAPIO.taxaEntrega = 0;
@@ -389,30 +401,6 @@ var CARDAPIO = {
                 CARDAPIO.metodos.mensagem('O seu carrinho está vazio.');
                 return;
             }
-            if (!CARDAPIO.whatsappLoja) {
-                CARDAPIO.metodos.mensagem('O número de WhatsApp da loja não está configurado.');
-                return;
-            }
-
-            let textoPedido = 'Olá, gostaria de fazer um pedido:\n\n';
-            let subTotal = 0;
-
-            textoPedido += '*Itens do pedido:*\n';
-            $.each(CARDAPIO.meuCarrinho, (index, item) => {
-                let precoItemTotal = parseFloat(item.price);
-                textoPedido += `*${item.quantity}x* ${item.name}\n`;
-                if (item.adicionais.length > 0) {
-                    item.adicionais.forEach(adicional => {
-                        precoItemTotal += adicional.preco;
-                        textoPedido += `  + ${adicional.nome}\n`;
-                    });
-                }
-                if (item.observacoes) {
-                    textoPedido += `  Obs: ${item.observacoes}\n`;
-                }
-                subTotal += precoItemTotal * item.quantity;
-            });
-            textoPedido += '\n';
 
             if (CARDAPIO.metodoEntrega === 'entrega') {
                 const rua = $('#input-rua').val();
@@ -421,37 +409,58 @@ var CARDAPIO = {
                     CARDAPIO.metodos.mensagem('Por favor, preencha o seu endereço completo.');
                     return;
                 }
-                textoPedido += `*Endereço de entrega:*\n`;
-                textoPedido += `${rua}, ${numero}, ${$('#input-bairro').val()}\n`;
-                const complemento = $('#input-complemento').val();
-                if (complemento) textoPedido += `${complemento}\n`;
-            } else {
-                textoPedido += '*Método: Retirada no local*\n';
             }
-            textoPedido += '\n';
 
-            textoPedido += `*Forma de pagamento:*\n`;
-            textoPedido += CARDAPIO.formaPagamento.charAt(0).toUpperCase() + CARDAPIO.formaPagamento.slice(1) + '\n';
-            if (CARDAPIO.formaPagamento === 'dinheiro') {
-                const troco = $('#input-troco').val();
-                if (troco) textoPedido += `Troco para: R$ ${troco}\n`;
-            }
-            textoPedido += '\n';
-
+            let subTotal = 0;
+            CARDAPIO.meuCarrinho.forEach(item => {
+                let precoItem = parseFloat(item.price);
+                item.adicionais.forEach(ad => precoItem += ad.preco);
+                subTotal += precoItem * item.quantity;
+            });
             const taxaEntregaFinal = CARDAPIO.metodoEntrega === 'entrega' ? CARDAPIO.taxaEntrega : 0;
             const totalGeral = subTotal + taxaEntregaFinal;
-            textoPedido += `*Subtotal:* ${subTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n`;
-            textoPedido += `*Taxa de Entrega:* ${taxaEntregaFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n`;
-            textoPedido += `*Total:* *${totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n`;
 
-            const PHONE = CARDAPIO.whatsappLoja;
-            const encodedMessage = encodeURIComponent(textoPedido);
-            const whatsappURL = `https://wa.me/${PHONE}?text=${encodedMessage}`;
-            window.open(whatsappURL, '_blank');
+            const pedido = {
+                id_loja: ID_LOJA,
+                carrinho: CARDAPIO.meuCarrinho,
+                totais: {
+                    subTotal: subTotal,
+                    taxaEntrega: taxaEntregaFinal,
+                    totalGeral: totalGeral
+                },
+                entrega: {
+                    metodo: CARDAPIO.metodoEntrega,
+                    cep: $('#input-cep').val(),
+                    rua: $('#input-rua').val(),
+                    bairro: $('#input-bairro').val(),
+                    numero: $('#input-numero').val(),
+                    complemento: $('#input-complemento').val()
+                },
+                pagamento: {
+                    forma: CARDAPIO.formaPagamento,
+                    troco: $('#input-troco').val() || null
+                }
+            };
 
-            CARDAPIO.meuCarrinho = [];
-            CARDAPIO.metodos.atualizarCarrinho();
-            $('#modal-carrinho').removeClass('visivel');
+            $.ajax({
+                url: `${API_BASE_URL}/pedidos`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(pedido),
+                success: function(response) {
+                    // ✨ MENSAGEM ATUALIZADA COM LINK PARA ACOMPANHAR ✨
+                    const linkAcompanhar = `<a href="/acompanhar.html?pedido=${response.numeroPedido}" target="_blank">Clique aqui para acompanhar</a>`;
+                    CARDAPIO.metodos.mensagem(`Pedido enviado com sucesso! O seu número é: ${response.numeroPedido}.<br>${linkAcompanhar}`, 'green', 5000);
+                    
+                    CARDAPIO.meuCarrinho = [];
+                    CARDAPIO.metodos.limparEndereco();
+                    CARDAPIO.metodos.atualizarCarrinho();
+                    $('#modal-carrinho').removeClass('visivel');
+                },
+                error: function() {
+                    CARDAPIO.metodos.mensagem('Ocorreu um erro ao enviar o seu pedido. Tente novamente.');
+                }
+            });
         },
 
         mensagem: (texto, cor = 'green', tempo = 3000) => {
